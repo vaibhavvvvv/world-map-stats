@@ -291,8 +291,8 @@ export default function WorldMap() {
   return (
     <div className="fixed top-0 left-0 right-0 bottom-0">
       <MapContainer
-        center={[20, 0]}
-        zoom={2}
+        center={[20.5937, 78.9629]} // Center the map on India
+        zoom={5} // Adjust the zoom level for a closer view of India
         style={{ height: '100%', width: '100%' }}
         maxBounds={[[-90, -180], [90, 180]]}
         maxBoundsViscosity={1.0}
