@@ -203,15 +203,45 @@ import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 
 // Custom icon
-const customIcon = new L.Icon({
-  iconUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon.png',
-  iconRetinaUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon-2x.png',
-  iconSize: [25, 41],
-  iconAnchor: [12, 41],
-  popupAnchor: [1, -34],
+const customIcon = new L.DivIcon({
+  html: `<div class="custom-marker">
+           <span class="anticon anticon-environment">
+             <svg viewBox="64 64 896 896" focusable="false" class="" data-icon="environment" width="2em" height="2em" fill="currentColor" aria-hidden="true">
+               <path d="M512 64C324.3 64 176 208.6 176 384c0 237 300.6 526.2 318.7 543.1a31.99 31.99 0 0045.4 0C547.4 910.2 848 621 848 384 848 208.6 699.7 64 512 64zm0 484c-70.7 0-128-57.3-128-128s57.3-128 128-128 128 57.3 128 128-57.3 128-128 128z"></path>
+             </svg>
+           </span>
+         </div>`,
+  className: 'ant-icon',
+  iconSize: [25, 41], // Twice the original size
+  iconAnchor: [12, 25], // Adjust anchor to be at the bottom center of the icon
+  popupAnchor: [1, -34], // Adjust popup position
   shadowUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png',
   shadowSize: [41, 41],
 });
+
+
+// Add this CSS to handle the animation
+const style = document.createElement('style');
+style.innerHTML = `
+  .custom-marker {
+    animation: pulse 2s infinite;
+    color: #1E3A8A; /* Dark blue */
+  }
+
+  @keyframes pulse {
+    0%, 100% {
+      transform: scale(0.9);
+      color: #1E3A8A; /* Dark blue */
+      filter: drop-shadow(0 0 10px rgba(0, 0, 0, 0.5));
+    }
+    50% {
+      transform: scale(1.1);
+      color: #3B82F6; /* Normal blue */
+      filter: drop-shadow(0 0 0px rgba(0, 0, 0, 0));
+    }
+  }
+`;
+document.head.appendChild(style);
 
 export default function WorldMap() {
   const [nodes, setNodes] = useState([]);
@@ -219,7 +249,7 @@ export default function WorldMap() {
 
   useEffect(() => {
     const socket = new WebSocket('wss://dev.gateway.erebrus.io/api/v1.0/nodedwifi/stream');
-
+    
     socket.onopen = function () {
       console.log('WebSocket is open now.');
     };
@@ -294,7 +324,7 @@ export default function WorldMap() {
         center={[20.5937, 78.9629]} // Center the map on India
         zoom={5} // Adjust the zoom level for a closer view of India
         style={{ height: '100%', width: '100%' }}
-        maxBounds={[[-90, -180], [90, 180]]}
+        maxBounds={[[6, 68], [37, 97]]} // Optional: constrain the map to India's approximate boundaries
         maxBoundsViscosity={1.0}
       >
         <TileLayer
